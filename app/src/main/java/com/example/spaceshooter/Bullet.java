@@ -8,11 +8,15 @@ public class Bullet {
     Bitmap bullet;
     Context context;
     int bx, by;
+    double angle;
     int bVelx, bVely;
 
-    public Bullet(Context context, int bx, int by) {
+    public Bullet(Context context, int bx, int by, int bulletType) {
         this.context = context;
-        bullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet);
+        if (bulletType == 0)
+            bullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet);
+        else if (bulletType == 1)
+            bullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet1);
         this.bx = bx;
         this.by = by;
     }

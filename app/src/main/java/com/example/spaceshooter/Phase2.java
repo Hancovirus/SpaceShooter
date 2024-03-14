@@ -33,7 +33,7 @@ public class Phase2 extends Phase{
             //Draw enemy
 
             if (eBullets.size() < 3) {
-                Bullet enemyBullet = new Bullet(context, enemies.get(i).ex + enemies.get(i).getEnemySpaceShipWidth()/2, enemies.get(i).ey + i * enemies.get(i).getEnemySpaceShipWidth());
+                Bullet enemyBullet = new Bullet(context, enemies.get(i).ex + enemies.get(i).getEnemySpaceShipWidth()/2, enemies.get(i).ey + i * enemies.get(i).getEnemySpaceShipWidth(), 0);
                 enemyBullet.bVely = 20;
                 eBullets.add(enemyBullet);
             } //Enemy shoot bullet

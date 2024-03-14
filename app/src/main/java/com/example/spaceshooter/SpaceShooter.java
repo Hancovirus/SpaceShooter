@@ -117,7 +117,7 @@ public class SpaceShooter extends View {
         }//Draw player
 
         if (lastBulletFrame == 30) {
-            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py);
+            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py, 0);
             pBullets.add(pBullet);
             lastBulletFrame = 0;
         } else {
