@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class GameOver extends AppCompatActivity {
     TextView tvPoints;
 
@@ -15,9 +17,9 @@ public class GameOver extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_over);
-        int points = getIntent().getExtras().getInt("points");
+        int points = Objects.requireNonNull(getIntent().getExtras()).getInt("points");
         tvPoints = findViewById(R.id.tvPoints);
-        tvPoints.setText("" + String.valueOf(points));
+        tvPoints.setText("" + points);
     }
 
     public void restart(View v) {

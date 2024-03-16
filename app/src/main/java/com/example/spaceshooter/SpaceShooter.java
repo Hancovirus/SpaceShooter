@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
@@ -27,6 +28,7 @@ public class SpaceShooter extends View {
     Context context;
     Handler handler;
     int UPDATE_MILLIS = 20;
+    Rect screen;
     static int screenWidth, screenHeight;
     int points = 0;
     int life = 3;
@@ -62,6 +64,7 @@ public class SpaceShooter extends View {
         display.getSize(size);
         screenWidth = size.x;
         screenHeight = size.y;
+        screen = new Rect(0, 0, screenWidth, screenHeight);
         enemies = new ArrayList<>();
         player = new Player(context);
         background = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
@@ -84,7 +87,7 @@ public class SpaceShooter extends View {
             paused = true;
             handler = null;
             Intent intent = new Intent(context, GameOver.class);
-            intent.putExtra("Points", points);
+            intent.putExtra("points", points);
             context.startActivity(intent);
             ((Activity) context).finish();
         }
@@ -178,12 +181,13 @@ public class SpaceShooter extends View {
                         && pBullet.by + pBullet.getBulletHeight() <= enemy.ey + enemy.getEnemySpaceShipHeight()
                         && pBullet.by + pBullet.getBulletHeight() >= enemy.ey)) {
                     points++;
-                    iterator.remove(); // Remove pBullet
+                    iterator.remove();
                     enemyIterator.remove(); // Remove enemy
+                    break;
                 }
             }
 
-            if (pBullet.by <= 0) {
+            if (pBullet.by <= -100) {
                 iterator.remove(); // Remove pBullet
             }
         }
@@ -202,7 +206,7 @@ public class SpaceShooter extends View {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        canvas.drawBitmap(background, 0, 0, null);
+        canvas.drawBitmap(background, null, screen, null);
         canvas.drawText("Pt: " + points, 0, TEXT_SIZE, scorePaint);
 
         drawLife(canvas);
@@ -215,7 +219,7 @@ public class SpaceShooter extends View {
 
         handleBulletCollision(canvas);
 
-        handleExplosion(canvas);
+        //handleExplosion(canvas);
 
         if (!paused) {
             handler.postDelayed(runnable, UPDATE_MILLIS);
