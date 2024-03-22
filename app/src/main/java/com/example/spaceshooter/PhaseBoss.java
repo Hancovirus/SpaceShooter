@@ -7,15 +7,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PhaseBoss extends Phase{
     private int lastBulletFrame = 30;
     private int currentAngle = 0;
     private int bulletVelocity = 20;
+    private boolean isSpawned = false;
     EnemySpaceShip boss;
     public PhaseBoss(Context context) {
-        super.size = 1;
-        super.requirement = 50;
+        super.requirement = 15;
         boss = new EnemySpaceShip(context);
         boss.ex = 500;
         boss.ey = 500;
@@ -23,18 +24,21 @@ public class PhaseBoss extends Phase{
     }
     @Override
     public void enemyMovement(Canvas canvas, ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets, Context context, int screenWidth) {
+        if (!isSpawned) {
+            enemies.add(boss);
+            isSpawned = true;
+        }
         canvas.drawBitmap(boss.getEnemySpaceShip(), boss.ex, boss.ey, null);
         //Draw Boss
-
         if (lastBulletFrame == 30) {
             currentAngle += 5;
 
             double angle = Math.toRadians(currentAngle % 360);
-            Bullet enemyBullet1 = new Bullet(context, boss.ex + boss.getEnemySpaceShipWidth()/2, boss.ey + boss.getEnemySpaceShipWidth()/2, 1);
+            Bullet enemyBullet1 = new Bullet(context, boss.ex + boss.getEnemySpaceShipWidth()/2, boss.ey + boss.getEnemySpaceShipWidth()/2, 1, false);
             enemyBullet1.angle = angle;
             enemyBullet1.bVelx = bulletVelocity;
             enemyBullet1.bVely = bulletVelocity;
-            Bullet enemyBullet2 = new Bullet(context, boss.ex + boss.getEnemySpaceShipWidth()/2, boss.ey + boss.getEnemySpaceShipWidth()/2, 1);
+            Bullet enemyBullet2 = new Bullet(context, boss.ex + boss.getEnemySpaceShipWidth()/2, boss.ey + boss.getEnemySpaceShipWidth()/2, 1, false);
             enemyBullet2.angle = angle + Math.toRadians(180);
             enemyBullet2.bVelx = bulletVelocity;
             enemyBullet2.bVely = bulletVelocity;
@@ -54,6 +58,9 @@ public class PhaseBoss extends Phase{
 
     @Override
     public void handleFinish(ArrayList<EnemySpaceShip> enemies) {
-
+        for (Iterator<EnemySpaceShip> enemyIterator = enemies.iterator(); enemyIterator.hasNext();) {
+            EnemySpaceShip enemy = enemyIterator.next();
+            enemyIterator.remove(); // Remove enemy
+        }
     }
 }

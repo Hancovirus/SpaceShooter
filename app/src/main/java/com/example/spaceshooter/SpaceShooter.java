@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
@@ -24,11 +25,13 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class SpaceShooter extends View {
+    private MediaPlayer BGMPlayer;
     Bitmap background, lifeImage;
     Context context;
     Handler handler;
     int UPDATE_MILLIS = 20;
     Rect screen;
+    Rect explosionRect;
     static int screenWidth, screenHeight;
     int points = 0;
     int life = 3;
@@ -74,6 +77,14 @@ public class SpaceShooter extends View {
         scorePaint.setColor(Color.RED);
         scorePaint.setTextSize(TEXT_SIZE);
         scorePaint.setTextAlign(Paint.Align.LEFT);
+        BGMPlayer = MediaPlayer.create(this.getContext(), R.raw.gamebgm);
+        BGMPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                restartAudio(BGMPlayer);
+            }
+        });
+        BGMPlayer.start();
     }
 
     private void drawLife(Canvas canvas) {
@@ -84,6 +95,7 @@ public class SpaceShooter extends View {
 
     private void handleDeath() {
         if (life == 0) {
+            stopAudio(BGMPlayer);
             paused = true;
             handler = null;
             Intent intent = new Intent(context, GameOver.class);
@@ -106,6 +118,9 @@ public class SpaceShooter extends View {
             phase = new Phase2();
         else if (phase instanceof Phase2)
             phase = new PhaseBoss(context);
+        else {
+            life = 0;
+        }
 
     }
 
@@ -120,7 +135,7 @@ public class SpaceShooter extends View {
         }//Draw player
 
         if (lastBulletFrame == 30) {
-            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py, 0);
+            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py, 0, true);
             pBullets.add(pBullet);
             lastBulletFrame = 0;
         } else {
@@ -161,7 +176,6 @@ public class SpaceShooter extends View {
             Bullet pBullet = iterator.next();
             pBullet.by -= 150;
             canvas.drawBitmap(pBullet.getBullet(), pBullet.bx, pBullet.by, null);
-
             for (Iterator<EnemySpaceShip> enemyIterator = enemies.iterator(); enemyIterator.hasNext();) {
                 EnemySpaceShip enemy = enemyIterator.next();
                 if ((pBullet.bx >= enemy.ex
@@ -182,7 +196,10 @@ public class SpaceShooter extends View {
                         && pBullet.by + pBullet.getBulletHeight() >= enemy.ey)) {
                     points++;
                     iterator.remove();
-                    enemyIterator.remove(); // Remove enemy
+                    if (!(phase instanceof PhaseBoss))
+                        enemyIterator.remove(); // Remove enemy
+                    explosion = new Explosion(context, enemy.ex, enemy.ey, enemy.getEnemySpaceShipWidth(), enemy.getEnemySpaceShipHeight());
+                    explosions.add(explosion);
                     break;
                 }
             }
@@ -196,12 +213,23 @@ public class SpaceShooter extends View {
 
     private void handleExplosion(Canvas canvas) {
         for (int i = 0; i < explosions.size(); i++) {
-            canvas.drawBitmap(explosions.get(i).getExplosion(), explosions.get(i).ex, explosions.get(i).ey, null);
+            explosionRect = new Rect(explosion.ex, explosion.ey, explosion.ex + explosion.width, explosion.ey + explosion.height);
+            canvas.drawBitmap(explosions.get(i).getExplosion(), null, explosionRect, null);
             explosions.get(i).frame++;
             if (explosions.get(i).frame > 8) {
                 explosions.remove(i);
             }
         } //Create explosion for 8 frame
+    }
+
+    private void restartAudio(MediaPlayer mediaPlayer) {
+        mediaPlayer.seekTo(0);
+        mediaPlayer.start();
+    }
+
+    private void stopAudio(MediaPlayer mediaPlayer) {
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 
     @Override
@@ -219,7 +247,7 @@ public class SpaceShooter extends View {
 
         handleBulletCollision(canvas);
 
-        //handleExplosion(canvas);
+        handleExplosion(canvas);
 
         if (!paused) {
             handler.postDelayed(runnable, UPDATE_MILLIS);
