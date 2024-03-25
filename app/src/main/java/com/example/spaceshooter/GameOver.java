@@ -12,16 +12,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class GameOver extends AppCompatActivity {
-    TextView tvPoints;
+    TextView pointsTV, pointsTVLabel;
     private MediaPlayer BGMPlayer;
+    Language language;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_over);
+        language = Language.getInstance();
         int points = Objects.requireNonNull(getIntent().getExtras()).getInt("points");
-        tvPoints = findViewById(R.id.tvPoints);
-        tvPoints.setText("" + points);
+        pointsTVLabel = findViewById(R.id.pointsTVLabel);
+        pointsTVLabel.setText(language.getPoints() + ":");
+        pointsTV = findViewById(R.id.pointsTV);
+        pointsTV.setText("" + points);
         BGMPlayer = MediaPlayer.create(this, R.raw.gameover);
         BGMPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override

@@ -18,4 +18,13 @@
             android:onClick="startGame" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/startTV"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:text="Start"
+        android:textColor="#FFFFFF"
+        android:textAlignment="center"
+        android:textSize="25sp"/>
+
 </LinearLayout>

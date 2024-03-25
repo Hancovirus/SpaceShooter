@@ -30,6 +30,7 @@ public class SpaceShooter extends View {
     Context context;
     Handler handler;
     int UPDATE_MILLIS = 20;
+    Language language;
     Rect screen;
     Rect explosionRect;
     static int screenWidth, screenHeight;
@@ -56,6 +57,7 @@ public class SpaceShooter extends View {
 
     public SpaceShooter(Context context) {
         super(context);
+        language = Language.getInstance();
         this.context = context;
         phase = new Phase1();
         random = new Random();
@@ -163,7 +165,7 @@ public class SpaceShooter extends View {
                     && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth()
                     && eBullet.by + eBullet.getBulletHeight() >= player.py
                     && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())) {
-                //life--;
+                life--;
                 iterator.remove();
                 //explosion = new Explosion(context, player.px, player.py);
                 //explosions.add(explosion);
@@ -235,7 +237,7 @@ public class SpaceShooter extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         canvas.drawBitmap(background, null, screen, null);
-        canvas.drawText("Pt: " + points, 0, TEXT_SIZE, scorePaint);
+        canvas.drawText( language.getPoints() +": " + points, 0, TEXT_SIZE, scorePaint);
 
         drawLife(canvas);
 
