@@ -3,6 +3,8 @@ package com.example.spaceshooter;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,8 +14,10 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -36,22 +40,40 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class StartUp extends AppCompatActivity {
     TextView startTV;
+    ImageView start;
+    Button lastPlayed;
     private MediaPlayer BGMPlayer;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Geocoder geocoder;
+    private List<Pair<Double, Double>> pairsList = new ArrayList<>();
+    private String filename = "lastplayed";
+    private String filepath = "MyFileDir";
     private Language language;
     private com.google.android.gms.location.LocationRequest locationRequest = com.google.android.gms.location.LocationRequest.create();
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private Pair<Double, Double> locationPair;
+    private Double latitude, longitude;
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -60,6 +82,9 @@ public class StartUp extends AppCompatActivity {
             }
             for (Location location : locationResult.getLocations()) {
                 try {
+                    locationPair = new Pair<>(location.getLatitude(), location.getLongitude());
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     if (!addresses.isEmpty()) {
                         Language.setCountryName(addresses.get(0).getCountryName());
@@ -74,6 +99,8 @@ public class StartUp extends AppCompatActivity {
                 }
             }
             stopLocationUpdates();
+            lastPlayed.setEnabled(true);
+            start.setEnabled(true);
         }
     };
 
@@ -159,6 +186,10 @@ public class StartUp extends AppCompatActivity {
             }
         });
         BGMPlayer.start();
+        lastPlayed = (Button) findViewById(R.id.lastPlayed);
+        start = (ImageView) findViewById(R.id.start);
+        lastPlayed.setEnabled(false);
+        start.setEnabled(false);
     }
 
     private void restartAudio() {
@@ -173,6 +204,57 @@ public class StartUp extends AppCompatActivity {
 
     public void startGame(View v) {
         stopAudio();
+        readTextFile();
+        writeTextFile();
         setContentView(new SpaceShooter(this));
+    }
+
+    public void seePast(View v) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void writeTextFile() {
+        File myExternalFile = new File(getExternalFilesDir(filepath), filename);
+        FileOutputStream fos = null;
+        StringBuilder fileContent = new StringBuilder();
+
+        for (Pair<Double, Double> pair : pairsList) {
+            fileContent.append(pair.first).append("-").append(pair.second).append("\n");
+        }
+
+        try {
+            fos = new FileOutputStream(myExternalFile);
+            fos.write(fileContent.toString().getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void readTextFile() {
+        File myExternalFile = new File(getExternalFilesDir(filepath), filename);
+
+        try {
+            FileReader fr = new FileReader(myExternalFile);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            Pair<Double, Double> pair = null;
+            while ((line = br.readLine()) != null) {
+                String[] coordinates = line.split("-");
+                if (coordinates.length == 2) {
+                    double latitude = Double.parseDouble(coordinates[0]);
+                    double longitude = Double.parseDouble(coordinates[1].replaceAll("[^\\d.]", ""));
+                    pair = new Pair<>(latitude, longitude);
+                    pairsList.add(pair);
+                }
+            }
+            pairsList.add(new Pair<>(locationPair.first, locationPair.second));
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

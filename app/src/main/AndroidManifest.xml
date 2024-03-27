@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,7 +16,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-        tools:targetApi="31">
+        tools:targetApi="34">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCDbBa3Gj09tpqMaiY7vhlN0kL3G3xkYn4" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -28,6 +37,10 @@
         </activity>
         <activity
             android:name=".GameOver"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".MapsActivity"
             android:exported="true">
         </activity>
     </application>

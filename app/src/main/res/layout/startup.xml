@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/start"
             android:layout_width="118dp"
             android:layout_height="123dp"
             android:background="@drawable/playicon"
@@ -26,5 +27,13 @@
         android:textColor="#FFFFFF"
         android:textAlignment="center"
         android:textSize="25sp"/>
+
+    <Button
+        android:id="@+id/lastPlayed"
+        android:layout_width="194dp"
+        android:layout_height="66dp"
+        android:text="LastPLayed"
+        android:textSize="25sp"
+        android:onClick="seePast"/>
 
 </LinearLayout>
