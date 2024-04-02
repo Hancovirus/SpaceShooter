@@ -7,18 +7,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -61,8 +67,12 @@ import java.util.Locale;
 
 public class StartUp extends AppCompatActivity {
     TextView startTV;
+    Spinner playerSpinner;
+    contactAdapter contactAdapter;
+    ArrayList<String> listContact = new ArrayList<>();;
     ImageView start;
     Button lastPlayed;
+    Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private MediaPlayer BGMPlayer;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Geocoder geocoder;
@@ -190,6 +200,44 @@ public class StartUp extends AppCompatActivity {
         start = (ImageView) findViewById(R.id.start);
         lastPlayed.setEnabled(false);
         start.setEnabled(false);
+        playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
+        importList();
+        contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
+        playerSpinner.setAdapter(contactAdapter);
+        playerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(StartUp.this, contactAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+    private void importList() {
+        listContact.clear();
+
+        String[] Projection = {ContactsContract.Contacts.DISPLAY_NAME};
+
+        Cursor cursor = getContentResolver().query(uri, Projection, null, null, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String conName = ContactsContract.Contacts.DISPLAY_NAME;
+
+                int idName = cursor.getColumnIndex(conName);
+
+                String name = cursor.getString(idName);
+
+                String contact = name;
+
+                listContact.add(contact);
+            }
+        }
     }
 
     private void restartAudio() {
@@ -206,7 +254,14 @@ public class StartUp extends AppCompatActivity {
         stopAudio();
         readTextFile();
         writeTextFile();
-        setContentView(new SpaceShooter(this));
+        String account = (String) playerSpinner.getSelectedItem();
+        setContentView(new SpaceShooter(this, account));
+    }
+
+    public void seeLeaderBoard(View v) {
+        Intent intent = new Intent(this, LeaderBoard.class);
+        startActivity(intent);
+        finish();
     }
 
     public void seePast(View v) {

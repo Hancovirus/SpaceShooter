@@ -26,6 +26,7 @@ import java.util.Random;
 
 public class SpaceShooter extends View {
     private MediaPlayer BGMPlayer;
+    private String account;
     Bitmap background, lifeImage;
     Context context;
     Handler handler;
@@ -55,9 +56,10 @@ public class SpaceShooter extends View {
         }
     };
 
-    public SpaceShooter(Context context) {
+    public SpaceShooter(Context context, String account) {
         super(context);
         language = Language.getInstance();
+        this.account = account;
         this.context = context;
         phase = new Phase1();
         random = new Random();
@@ -102,6 +104,7 @@ public class SpaceShooter extends View {
             handler = null;
             Intent intent = new Intent(context, GameOver.class);
             intent.putExtra("points", points);
+            intent.putExtra("account", account);
             context.startActivity(intent);
             ((Activity) context).finish();
         }

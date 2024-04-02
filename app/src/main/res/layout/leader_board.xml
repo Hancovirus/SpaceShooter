@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/leaderBoard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="35sp"
+        tools:text="LeaderBoard" />
+
+    <ListView
+        android:id="@+id/leaderlv"
+        android:layout_width="306dp"
+        android:layout_height="449dp"
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="115dp"
+        android:background="@color/white"/>
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:text="Back" />
+
+</LinearLayout>

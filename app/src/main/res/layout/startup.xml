@@ -36,4 +36,18 @@
         android:textSize="25sp"
         android:onClick="seePast"/>
 
+    <Spinner
+        android:id="@+id/playerSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent" />
+
+    <Button
+        android:id="@+id/leaderboard"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="LeaderBoard"
+        android:onClick="seeLeaderBoard"/>
+
 </LinearLayout>
