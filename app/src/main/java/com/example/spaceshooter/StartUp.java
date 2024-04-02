@@ -70,7 +70,7 @@ public class StartUp extends AppCompatActivity {
     Spinner playerSpinner;
     contactAdapter contactAdapter;
     ArrayList<String> listContact = new ArrayList<>();;
-    ImageView start;
+    ImageView start, menu, exit;
     Button lastPlayed;
     Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private MediaPlayer BGMPlayer;
@@ -197,7 +197,7 @@ public class StartUp extends AppCompatActivity {
         });
         BGMPlayer.start();
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
-        start = (ImageView) findViewById(R.id.start);
+        start = (ImageView) findViewById(R.id.play_button);
         lastPlayed.setEnabled(false);
         start.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
@@ -213,6 +213,29 @@ public class StartUp extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame(v);
+            }
+        });
+
+        exit = (ImageView) findViewById(R.id.exit_button);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitGame(v);
+            }
+        });
+
+        menu = (ImageView) findViewById(R.id.menu_button);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettings(v);
             }
         });
 
@@ -267,6 +290,14 @@ public class StartUp extends AppCompatActivity {
     public void seePast(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    public void openSettings(View v) {
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+    }
+
+    public void exitGame(View v) {
         finish();
     }
 

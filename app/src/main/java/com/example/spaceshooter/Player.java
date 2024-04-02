@@ -16,7 +16,7 @@ public class Player {
 
     public Player(Context context) {
         this.context = context;
-        playerSpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.placeholder);
+        playerSpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.player);
         random = new Random();
         resetPlayerSpaceShip();
     }

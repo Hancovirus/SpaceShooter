@@ -170,8 +170,8 @@ public class SpaceShooter extends View {
                     && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())) {
                 life--;
                 iterator.remove();
-                //explosion = new Explosion(context, player.px, player.py);
-                //explosions.add(explosion);
+                explosion = new Explosion(context, player.px, player.py, player.getPlayerSpaceShipWidth(), player.getPlayerSpaceShiHeight());
+                explosions.add(explosion);
             } else if (eBullet.by >= screenHeight) {
                 iterator.remove();
             }
@@ -219,9 +219,9 @@ public class SpaceShooter extends View {
     private void handleExplosion(Canvas canvas) {
         for (int i = 0; i < explosions.size(); i++) {
             explosionRect = new Rect(explosion.ex, explosion.ey, explosion.ex + explosion.width, explosion.ey + explosion.height);
-            canvas.drawBitmap(explosions.get(i).getExplosion(), null, explosionRect, null);
+            canvas.drawBitmap(explosions.get(i).getExplosion(explosions.get(i).frame), null, explosionRect, null);
             explosions.get(i).frame++;
-            if (explosions.get(i).frame > 8) {
+            if (explosions.get(i).frame > 7) {
                 explosions.remove(i);
             }
         } //Create explosion for 8 frame

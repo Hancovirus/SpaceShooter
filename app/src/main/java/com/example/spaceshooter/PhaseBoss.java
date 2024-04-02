@@ -12,7 +12,7 @@ import java.util.Iterator;
 public class PhaseBoss extends Phase{
     private int lastBulletFrame = 30;
     private int currentAngle = 0;
-    private int bulletVelocity = 20;
+    private final int bulletVelocity = 20;
     private boolean isSpawned = false;
     EnemySpaceShip boss;
     public PhaseBoss(Context context) {
