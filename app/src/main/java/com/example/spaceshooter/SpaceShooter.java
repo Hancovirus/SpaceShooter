@@ -11,17 +11,17 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Sensor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+
 
 import androidx.annotation.NonNull;
 
@@ -46,6 +46,7 @@ public class SpaceShooter extends View implements SensorEventListener {
     Paint scorePaint;
     int TEXT_SIZE = 80;
     boolean paused = false;
+
     Player player;
     Random random;
     Phase phase;
@@ -176,8 +177,8 @@ public class SpaceShooter extends View implements SensorEventListener {
                     && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())) {
                 life--;
                 iterator.remove();
-                //explosion = new Explosion(context, player.px, player.py);
-                //explosions.add(explosion);
+                explosion = new Explosion(context, player.px, player.py, player.getPlayerSpaceShipWidth(), player.getPlayerSpaceShiHeight());
+                explosions.add(explosion);
             } else if (eBullet.by >= screenHeight) {
                 iterator.remove();
             }
@@ -225,23 +226,15 @@ public class SpaceShooter extends View implements SensorEventListener {
     private void handleExplosion(Canvas canvas) {
         for (int i = 0; i < explosions.size(); i++) {
             explosionRect = new Rect(explosion.ex, explosion.ey, explosion.ex + explosion.width, explosion.ey + explosion.height);
-            canvas.drawBitmap(explosions.get(i).getExplosion(), null, explosionRect, null);
+            canvas.drawBitmap(explosions.get(i).getExplosion(explosions.get(i).frame), null, explosionRect, null);
             explosions.get(i).frame++;
-            if (explosions.get(i).frame > 8) {
+            if (explosions.get(i).frame > 7) {
                 explosions.remove(i);
             }
         } //Create explosion for 8 frame
     }
 
-    private void restartAudio(MediaPlayer mediaPlayer) {
-        mediaPlayer.seekTo(0);
-        mediaPlayer.start();
-    }
 
-    private void stopAudio(MediaPlayer mediaPlayer) {
-        mediaPlayer.release();
-        mediaPlayer = null;
-    }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -264,7 +257,7 @@ public class SpaceShooter extends View implements SensorEventListener {
             handler.postDelayed(runnable, UPDATE_MILLIS);
         } //Execute runnable after 20 Milli-secs
     }
-/*
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int touchX = (int) event.getX();
@@ -275,7 +268,7 @@ public class SpaceShooter extends View implements SensorEventListener {
         }
         return true;
     }
-*/
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {

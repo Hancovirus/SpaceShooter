@@ -6,24 +6,43 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="330dp"
+        android:layout_height="100dp"
+        android:background="@drawable/badge"
+        android:contentDescription="Name"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="50dp"/>
+
 
         <ImageView
-            android:id="@+id/start"
+            android:id="@+id/play_button"
             android:layout_width="118dp"
-            android:layout_height="123dp"
-            android:background="@drawable/playicon"
-            android:contentDescription="Play icon"
-            android:onClick="startGame" />
-    </LinearLayout>
+            android:layout_height="70dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/playbutton"
+            android:contentDescription="Play icon"/>
+        <ImageView
+            android:id="@+id/menu_button"
+            android:layout_width="118dp"
+            android:layout_height="70dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/menubutton"
+            android:contentDescription="Menu Button" />
+
+        <ImageView
+            android:id="@+id/exit_button"
+            android:layout_width="118dp"
+            android:layout_height="70dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/exitbutton"
+            android:contentDescription="Exit icon"/>
 
     <TextView
         android:id="@+id/startTV"
         android:layout_width="match_parent"
         android:layout_height="41dp"
-        android:text="Start"
+        android:text="Location loading..."
         android:textColor="#FFFFFF"
         android:textAlignment="center"
         android:textSize="25sp"/>
@@ -34,6 +53,7 @@
         android:layout_height="66dp"
         android:text="LastPLayed"
         android:textSize="25sp"
+        android:backgroundTint="#00168C"
         android:onClick="seePast"/>
 
     <Spinner
@@ -48,6 +68,7 @@
         android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:text="LeaderBoard"
+        android:backgroundTint="#00168C"
         android:onClick="seeLeaderBoard"/>
 
 </LinearLayout>

@@ -15,7 +15,7 @@ public class EnemySpaceShip {
 
     public EnemySpaceShip(Context context) {
         this.context = context;
-        enemySpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.placeholder);
+        enemySpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.threat);
         random = new Random();
         resetEnemySpaceShip();
     }

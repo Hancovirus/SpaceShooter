@@ -21,9 +21,9 @@ import java.util.Objects;
 
 public class GameOver extends AppCompatActivity {
     TextView pointsTV, pointsTVLabel, accountTV;
-
-    Language language;
     private boolean audioPlayed = false;
+    Language language;
+
     private List<Pair<String, Integer>> pairsList = new ArrayList<>();
     private int points;
     private String account;
@@ -47,7 +47,6 @@ public class GameOver extends AppCompatActivity {
         readTextFile();
         writeTextFile();
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -71,7 +70,6 @@ public class GameOver extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopAudio();
     }
 
     private void stopAudio() {
@@ -97,15 +95,14 @@ public class GameOver extends AppCompatActivity {
 
 
     public void restart(View v) {
-        stopAudio();
         Intent intent = new Intent(this, StartUp.class);
         startActivity(intent);
         finish();
     }
 
     public void exit(View V) {
-        stopAudio();
         finish();
+        stopAudio();
     }
 
     public void writeTextFile() {

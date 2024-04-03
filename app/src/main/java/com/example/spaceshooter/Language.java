@@ -13,10 +13,10 @@ public class Language {
 
     private Language() {
         if (countryName.equals("Vietnam")) {
-            start = "Bắt đầu";
+            start = "Vị trí: Việt Nam";
             points = "Điểm";
         } else {
-            start = "Start";
+            start = "Location: " + countryName;
             points = "Points";
         }
     }

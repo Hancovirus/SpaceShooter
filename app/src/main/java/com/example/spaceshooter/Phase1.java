@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-public class Phase1 extends Phase{
+public class Phase1 extends Phase {
     public Phase1() {
         super.size = 3;
         super.requirement = 5;

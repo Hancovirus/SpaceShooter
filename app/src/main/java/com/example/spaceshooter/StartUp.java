@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.ContactsContract;
@@ -66,14 +67,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class StartUp extends AppCompatActivity {
-    TextView startTV;
+    TextView langLocation;
     Spinner playerSpinner;
     contactAdapter contactAdapter;
     ArrayList<String> listContact = new ArrayList<>();;
-    ImageView start;
+    ImageView start, menu, exit;
     Button lastPlayed;
-    private boolean audioPlayed = false;
     Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+//    BackgroundSound mBackgroundSound = new BackgroundSound();
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Geocoder geocoder;
@@ -85,6 +87,7 @@ public class StartUp extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Pair<Double, Double> locationPair;
     private Double latitude, longitude;
+    private boolean audioPlayed = false;
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -100,8 +103,9 @@ public class StartUp extends AppCompatActivity {
                     if (!addresses.isEmpty()) {
                         Language.setCountryName(addresses.get(0).getCountryName());
                         language = Language.getInstance();
-                        startTV = findViewById(R.id.startTV);
-                        startTV.setText(language.getStart());
+                        // thay vì hiển thị "Start" trong các ngôn ngữ khác nhau thì hiện "Vị trí: *tên_nước*" trong các ngôn ngữ khác nhau
+                        langLocation = findViewById(R.id.startTV);
+                        langLocation.setText(language.getStart());
                     } else {
                         Log.e(TAG, "No address found.");
                     }
@@ -119,6 +123,7 @@ public class StartUp extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Initialize permission request launcher
+
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
                 //getLastLocation();
@@ -191,9 +196,7 @@ public class StartUp extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
-        start = (ImageView) findViewById(R.id.start);
         lastPlayed.setEnabled(false);
-        start.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
         importList();
         contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
@@ -210,6 +213,32 @@ public class StartUp extends AppCompatActivity {
             }
         });
 
+        start = (ImageView) findViewById(R.id.play_button);
+        start.setEnabled(false);
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame(v);
+            }
+        });
+
+        exit = (ImageView) findViewById(R.id.exit_button);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitGame(v);
+            }
+        });
+
+        menu = (ImageView) findViewById(R.id.menu_button);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettings(v);
+            }
+        });
+
+
     }
     @Override
     protected void onPause() {
@@ -220,21 +249,17 @@ public class StartUp extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (audioPlayed == false)
+        if (audioPlayed == true)
+        {
+            resumeAudio();
+        }
+        else
         {
             playStartAudio();
             audioPlayed = true;
         }
-        else
-        {
-            resumeAudio();
-        }
     }
 
-    private void stopAudio() {
-        Intent myIntent = new Intent(StartUp.this, PlaySongService.class);
-        stopService(myIntent);
-    }
     private void pauseAudio() {
         Intent myIntent = new Intent(StartUp.this, PlaySongService.class);
         myIntent.setAction("PAUSE_MUSIC");
@@ -256,7 +281,6 @@ public class StartUp extends AppCompatActivity {
         Intent myIntent = new Intent(StartUp.this, PlaySongService.class);
         startService(myIntent);
     }
-
     private void importList() {
         listContact.clear();
 
@@ -282,7 +306,6 @@ public class StartUp extends AppCompatActivity {
 
 
     public void startGame(View v) {
-        stopAudio();
         playGameAudio();
         readTextFile();
         writeTextFile();
@@ -299,6 +322,15 @@ public class StartUp extends AppCompatActivity {
     public void seePast(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    public void openSettings(View v) {
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void exitGame(View v) {
         finish();
     }
 
@@ -344,4 +376,25 @@ public class StartUp extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+//    public class BackgroundSound extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            MediaPlayer player = MediaPlayer.create(StartUp.this, R.raw.menubgm);
+//            player.setLooping(true); // Set looping
+//            player.setVolume(1.0f, 1.0f);
+//            player.start();
+//
+//            return null;
+//        }
+//    }
+//    public void onResume() {
+//        super.onResume();
+//        mBackgroundSound.execute((Void) null);
+//    }
+//    public void onPause() {
+//        super.onPause();
+//        mBackgroundSound.cancel(true);
+//    }
 }

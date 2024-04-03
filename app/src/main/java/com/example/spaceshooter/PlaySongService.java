@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 
 public class PlaySongService extends Service {
     private MediaPlayer mediaPlayer;
+    private int pausedPosition = 0;
     public PlaySongService() {
     }
 
@@ -64,12 +65,14 @@ public class PlaySongService extends Service {
     public void pauseMusic() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
+            pausedPosition = mediaPlayer.getCurrentPosition();
         }
     }
 
     public void resumeMusic() {
         if (mediaPlayer != null && !mediaPlayer.isPlaying()){
             mediaPlayer.start();
+            mediaPlayer.seekTo(pausedPosition);
         }
     }
 
