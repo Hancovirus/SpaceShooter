@@ -11,11 +11,43 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/start"
             android:layout_width="118dp"
             android:layout_height="123dp"
             android:background="@drawable/playicon"
             android:contentDescription="Play icon"
             android:onClick="startGame" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/startTV"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:text="Start"
+        android:textColor="#FFFFFF"
+        android:textAlignment="center"
+        android:textSize="25sp"/>
+
+    <Button
+        android:id="@+id/lastPlayed"
+        android:layout_width="194dp"
+        android:layout_height="66dp"
+        android:text="LastPLayed"
+        android:textSize="25sp"
+        android:onClick="seePast"/>
+
+    <Spinner
+        android:id="@+id/playerSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent" />
+
+    <Button
+        android:id="@+id/leaderboard"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="LeaderBoard"
+        android:onClick="seeLeaderBoard"/>
 
 </LinearLayout>

@@ -10,12 +10,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import androidx.annotation.NonNull;
 
@@ -23,12 +29,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-public class SpaceShooter extends View {
+public class SpaceShooter extends View implements SensorEventListener {
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private String account;
     Bitmap background, lifeImage;
     Context context;
     Handler handler;
     int UPDATE_MILLIS = 20;
+    Language language;
     Rect screen;
+    Rect explosionRect;
     static int screenWidth, screenHeight;
     int points = 0;
     int life = 3;
@@ -51,8 +62,10 @@ public class SpaceShooter extends View {
         }
     };
 
-    public SpaceShooter(Context context) {
+    public SpaceShooter(Context context, String account) {
         super(context);
+        language = Language.getInstance();
+        this.account = account;
         this.context = context;
         phase = new Phase1();
         random = new Random();
@@ -74,6 +87,12 @@ public class SpaceShooter extends View {
         scorePaint.setColor(Color.RED);
         scorePaint.setTextSize(TEXT_SIZE);
         scorePaint.setTextAlign(Paint.Align.LEFT);
+        // Khởi tạo sensor manager và cảm biến gia tốc
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+        }
     }
 
     private void drawLife(Canvas canvas) {
@@ -86,8 +105,12 @@ public class SpaceShooter extends View {
         if (life == 0) {
             paused = true;
             handler = null;
+            if (sensorManager != null) {
+                sensorManager.unregisterListener(this);
+            }
             Intent intent = new Intent(context, GameOver.class);
             intent.putExtra("points", points);
+            intent.putExtra("account", account);
             context.startActivity(intent);
             ((Activity) context).finish();
         }
@@ -106,6 +129,9 @@ public class SpaceShooter extends View {
             phase = new Phase2();
         else if (phase instanceof Phase2)
             phase = new PhaseBoss(context);
+        else {
+            life = 0;
+        }
 
     }
 
@@ -120,7 +146,7 @@ public class SpaceShooter extends View {
         }//Draw player
 
         if (lastBulletFrame == 30) {
-            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py, 0);
+            Bullet pBullet = new Bullet(context, player.px + player.getPlayerSpaceShipWidth()/2, player.py, 0, true);
             pBullets.add(pBullet);
             lastBulletFrame = 0;
         } else {
@@ -148,7 +174,7 @@ public class SpaceShooter extends View {
                     && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth()
                     && eBullet.by + eBullet.getBulletHeight() >= player.py
                     && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())) {
-                //life--;
+                life--;
                 iterator.remove();
                 //explosion = new Explosion(context, player.px, player.py);
                 //explosions.add(explosion);
@@ -161,7 +187,6 @@ public class SpaceShooter extends View {
             Bullet pBullet = iterator.next();
             pBullet.by -= 150;
             canvas.drawBitmap(pBullet.getBullet(), pBullet.bx, pBullet.by, null);
-
             for (Iterator<EnemySpaceShip> enemyIterator = enemies.iterator(); enemyIterator.hasNext();) {
                 EnemySpaceShip enemy = enemyIterator.next();
                 if ((pBullet.bx >= enemy.ex
@@ -182,7 +207,10 @@ public class SpaceShooter extends View {
                         && pBullet.by + pBullet.getBulletHeight() >= enemy.ey)) {
                     points++;
                     iterator.remove();
-                    enemyIterator.remove(); // Remove enemy
+                    if (!(phase instanceof PhaseBoss))
+                        enemyIterator.remove(); // Remove enemy
+                    explosion = new Explosion(context, enemy.ex, enemy.ey, enemy.getEnemySpaceShipWidth(), enemy.getEnemySpaceShipHeight());
+                    explosions.add(explosion);
                     break;
                 }
             }
@@ -196,7 +224,8 @@ public class SpaceShooter extends View {
 
     private void handleExplosion(Canvas canvas) {
         for (int i = 0; i < explosions.size(); i++) {
-            canvas.drawBitmap(explosions.get(i).getExplosion(), explosions.get(i).ex, explosions.get(i).ey, null);
+            explosionRect = new Rect(explosion.ex, explosion.ey, explosion.ex + explosion.width, explosion.ey + explosion.height);
+            canvas.drawBitmap(explosions.get(i).getExplosion(), null, explosionRect, null);
             explosions.get(i).frame++;
             if (explosions.get(i).frame > 8) {
                 explosions.remove(i);
@@ -204,10 +233,20 @@ public class SpaceShooter extends View {
         } //Create explosion for 8 frame
     }
 
+    private void restartAudio(MediaPlayer mediaPlayer) {
+        mediaPlayer.seekTo(0);
+        mediaPlayer.start();
+    }
+
+    private void stopAudio(MediaPlayer mediaPlayer) {
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
+
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         canvas.drawBitmap(background, null, screen, null);
-        canvas.drawText("Pt: " + points, 0, TEXT_SIZE, scorePaint);
+        canvas.drawText( language.getPoints() +": " + points, 0, TEXT_SIZE, scorePaint);
 
         drawLife(canvas);
 
@@ -219,13 +258,13 @@ public class SpaceShooter extends View {
 
         handleBulletCollision(canvas);
 
-        //handleExplosion(canvas);
+        handleExplosion(canvas);
 
         if (!paused) {
             handler.postDelayed(runnable, UPDATE_MILLIS);
         } //Execute runnable after 20 Milli-secs
     }
-
+/*
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int touchX = (int) event.getX();
@@ -235,5 +274,35 @@ public class SpaceShooter extends View {
             player.py = touchY - player.getPlayerSpaceShiHeight()/2;
         }
         return true;
+    }
+*/
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0];
+            float newX = player.px - x * 18;
+            if (newX < 0) {
+                newX = 0;
+            } else if (newX > screenWidth - player.getPlayerSpaceShipWidth()) {
+                newX = screenWidth - player.getPlayerSpaceShipWidth();
+            }
+
+            float y = event.values[1];
+            float newY = player.py + y * 8;
+            if (newY < 0) {
+                newY = 0;
+            } else if (newY > screenHeight - player.getPlayerSpaceShiHeight()) {
+                newY = screenHeight - player.getPlayerSpaceShiHeight();
+            }
+
+            player.px = (int) newX;
+            player.py = (int) newY;
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
