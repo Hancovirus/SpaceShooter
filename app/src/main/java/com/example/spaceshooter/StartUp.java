@@ -3,6 +3,8 @@ package com.example.spaceshooter;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -34,6 +36,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -67,6 +71,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class StartUp extends AppCompatActivity {
+    private NotificationManagerCompat notificationManagerCompat;
     TextView langLocation;
     Spinner playerSpinner;
     contactAdapter contactAdapter;
@@ -84,7 +89,9 @@ public class StartUp extends AppCompatActivity {
     private String filepath = "MyFileDir";
     private Language language;
     private com.google.android.gms.location.LocationRequest locationRequest = com.google.android.gms.location.LocationRequest.create();
-    private ActivityResultLauncher<String> requestPermissionLauncher;
+    private ActivityResultLauncher<String> requestNotificationPermissionLauncher;
+    private ActivityResultLauncher<String> requestLocationPermissionLauncher;
+    private ActivityResultLauncher<String> requestContactPermissionLauncher;
     private Pair<Double, Double> locationPair;
     private Double latitude, longitude;
     private boolean audioPlayed = false;
@@ -119,27 +126,7 @@ public class StartUp extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Initialize permission request launcher
 
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                //getLastLocation();
-                checkSettingsAndStartLocationUpdates();
-            } else {
-                Log.e(TAG, "Permissions not granted.");
-            }
-        });
-
-        // Request location permissions if not granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
-        } else {
-            checkSettingsAndStartLocationUpdates();
-        }
-    }
 
     @Override
     protected void onStop() {
@@ -198,7 +185,7 @@ public class StartUp extends AppCompatActivity {
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
         lastPlayed.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
-        importList();
+
         contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
         playerSpinner.setAdapter(contactAdapter);
         playerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -237,6 +224,58 @@ public class StartUp extends AppCompatActivity {
                 openSettings(v);
             }
         });
+        requestContactPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                //getLastLocation();
+                importList();
+            } else {
+                Log.e(TAG, "Permissions not granted.");
+            }
+        });
+
+        // Request location permissions if not granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestContactPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS);
+        } else {
+            importList();
+        }
+
+        this.notificationManagerCompat = NotificationManagerCompat.from(this);
+        // Khởi tạo requestPermissionLauncher
+        requestNotificationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                // Quyền đã được cấp, gửi thông báo
+                sendOnNoti();
+            }
+        });
+
+        // Kiểm tra quyền truy cập thông báo
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Nếu quyền chưa được cấp, yêu cầu cấp quyền truy cập thông báo
+            requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+        } else {
+            // Nếu quyền đã được cấp, gửi thông báo
+            sendOnNoti();
+        }
+
+        requestLocationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                //getLastLocation();
+                checkSettingsAndStartLocationUpdates();
+            } else {
+                Log.e(TAG, "Permissions not granted.");
+            }
+        });
+
+        // Request location permissions if not granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            checkSettingsAndStartLocationUpdates();
+        }
+
+
+
 
 
     }
@@ -376,6 +415,27 @@ public class StartUp extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    // Phương thức để gửi thông báo
+    @SuppressLint("MissingPermission")
+    private void sendOnNoti() {
+        // Tạo và gửi thông báo
+        String title =  "GameOn";
+        String message = "Chơi đê bạn êi";
+
+        Notification notification = new NotificationCompat.Builder(this, NotificationApp.CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.icon_notify)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        int notificationId = 1;
+
+        // Gửi thông báo
+        this.notificationManagerCompat.notify(notificationId, notification);
+    }
+
 
 //    public class BackgroundSound extends AsyncTask<Void, Void, Void> {
 //

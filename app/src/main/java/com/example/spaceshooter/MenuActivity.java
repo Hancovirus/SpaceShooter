@@ -31,6 +31,7 @@ public class MenuActivity extends AppCompatActivity {
                 else sound.setImageResource(R.drawable.soundbutton);
             }
         });
+
         music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
