@@ -42,11 +42,10 @@ public class SpaceShooter extends View implements SensorEventListener {
     Rect explosionRect;
     static int screenWidth, screenHeight;
     int points = 0;
-    int life = 3;
+    int life;
     Paint scorePaint;
     int TEXT_SIZE = 80;
     boolean paused = false;
-
     Player player;
     Random random;
     Phase phase;
@@ -66,9 +65,10 @@ public class SpaceShooter extends View implements SensorEventListener {
     public SpaceShooter(Context context, String account) {
         super(context);
         language = Language.getInstance();
+        life = 3;
         this.account = account;
         this.context = context;
-        phase = new Phase1();
+        phase = new Phase1(points);
         random = new Random();
         eBullets = new ArrayList<>();
         pBullets = new ArrayList<>();
@@ -82,7 +82,7 @@ public class SpaceShooter extends View implements SensorEventListener {
         enemies = new ArrayList<>();
         player = new Player(context);
         background = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
-        lifeImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.placeholder);
+        lifeImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.heart);
         handler = new Handler(Looper.getMainLooper());
         scorePaint = new Paint();
         scorePaint.setColor(Color.RED);
@@ -120,18 +120,18 @@ public class SpaceShooter extends View implements SensorEventListener {
     private void handleEnemy(Canvas canvas) {
         phase.enemyMovement(canvas, enemies, eBullets, context, screenWidth);
         if (phase.checkRequirement(points)) {
-            phase.handleFinish(enemies);
+            phase.handleFinish(enemies, eBullets);
             nextPhase();
         }
     }
 
     private void nextPhase() {
         if (phase instanceof Phase1)
-            phase = new Phase2();
+            phase = new Phase2(points);
         else if (phase instanceof Phase2)
-            phase = new PhaseBoss(context);
+            phase = new PhaseBoss(context, points);
         else {
-            life = 0;
+            phase = new Phase1(points);
         }
 
     }
@@ -159,22 +159,22 @@ public class SpaceShooter extends View implements SensorEventListener {
         for (Iterator<Bullet> iterator = eBullets.iterator(); iterator.hasNext();) {
             Bullet eBullet = iterator.next();
             canvas.drawBitmap(eBullet.getBullet(), eBullet.bx, eBullet.by, null);
-            if ((eBullet.bx >= player.px
-                    && eBullet.bx <= player.px + player.getPlayerSpaceShipWidth()
-                    && eBullet.by >= player.py
-                    && eBullet.by <= player.py + player.getPlayerSpaceShiHeight())
-            || (eBullet.bx + eBullet.getBulletWidth() >= player.px
-                    && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth()
-                    && eBullet.by >= player.py
-                    && eBullet.by <= player.py + player.getPlayerSpaceShiHeight())
-            || (eBullet.bx >= player.px
-                    && eBullet.bx <= player.px + player.getPlayerSpaceShipWidth()
-                    && eBullet.by + eBullet.getBulletHeight() >= player.py
-                    && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())
-            || (eBullet.bx + eBullet.getBulletWidth() >= player.px
-                    && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth()
-                    && eBullet.by + eBullet.getBulletHeight() >= player.py
-                    && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight())) {
+            if ((eBullet.bx >= player.px + player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.bx <= player.px + player.getPlayerSpaceShipWidth() - player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.by >= player.py + player.getPlayerSpaceShiHeight() / 4
+                    && eBullet.by <= player.py + player.getPlayerSpaceShiHeight() - player.getPlayerSpaceShiHeight() / 4)
+            || (eBullet.bx + eBullet.getBulletWidth() >= player.px + player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth() - player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.by >= player.py + player.getPlayerSpaceShiHeight() / 4
+                    && eBullet.by <= player.py + player.getPlayerSpaceShiHeight() - player.getPlayerSpaceShiHeight() / 4)
+            || (eBullet.bx >= player.px + player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.bx <= player.px + player.getPlayerSpaceShipWidth() - player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.by + eBullet.getBulletHeight() >= player.py + player.getPlayerSpaceShiHeight() / 4
+                    && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight() - player.getPlayerSpaceShiHeight() / 4)
+            || (eBullet.bx + eBullet.getBulletWidth() >= player.px + player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.bx + eBullet.getBulletWidth() <= player.px + player.getPlayerSpaceShipWidth() - player.getPlayerSpaceShipWidth() / 4
+                    && eBullet.by + eBullet.getBulletHeight() >= player.py + player.getPlayerSpaceShiHeight() / 4
+                    && eBullet.by + eBullet.getBulletHeight() <= player.py + player.getPlayerSpaceShiHeight() - player.getPlayerSpaceShiHeight() / 4)) {
                 life--;
                 iterator.remove();
                 explosion = new Explosion(context, player.px, player.py, player.getPlayerSpaceShipWidth(), player.getPlayerSpaceShiHeight());

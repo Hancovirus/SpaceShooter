@@ -12,5 +12,5 @@ public abstract class Phase {
     public boolean checkRequirement(int points) {
         return points >= requirement;
     }
-    public abstract void handleFinish(ArrayList<EnemySpaceShip> enemies);
+    public abstract void handleFinish(ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets);
 }

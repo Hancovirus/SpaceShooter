@@ -8,14 +8,22 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class Phase2 extends Phase{
-    public Phase2() {
+    private int waitFrame;
+    public Phase2(int requirement) {
         super.size = 2;
-        super.requirement = 8;
+        waitFrame = 50;
+        super.requirement = requirement + 5;
     }
     @Override
     public void enemyMovement(Canvas canvas, ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets, Context context, int screenWidth) {
+        if (waitFrame != 0) {
+            waitFrame--;
+            return;
+        }
+        //Cooldown between stages
+
         if (enemies.size() < super.size) {
-            EnemySpaceShip enemy = new EnemySpaceShip(context);
+            EnemySpaceShip enemy = new EnemySpaceShip(context, false);
             enemy.eVelx = 30;
             enemy.eVely = 10;
             enemies.add(enemy);
@@ -45,10 +53,15 @@ public class Phase2 extends Phase{
     }
 
     @Override
-    public void handleFinish(ArrayList<EnemySpaceShip> enemies) {
+    public void handleFinish(ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets) {
         for (Iterator<EnemySpaceShip> enemyIterator = enemies.iterator(); enemyIterator.hasNext();) {
             EnemySpaceShip enemy = enemyIterator.next();
             enemyIterator.remove(); // Remove enemy
+        }
+
+        for (Iterator<Bullet> bulletIterator = eBullets.iterator(); bulletIterator.hasNext();) {
+            Bullet bullet = bulletIterator.next();
+            bulletIterator.remove(); // Remove enemy
         }
     }
 }

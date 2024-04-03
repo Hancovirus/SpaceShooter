@@ -1,5 +1,7 @@
 package com.example.spaceshooter;
 
+import static com.example.spaceshooter.SpaceShooter.screenWidth;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,9 +15,12 @@ public class EnemySpaceShip {
     int eVelx, eVely;
     Random random;
 
-    public EnemySpaceShip(Context context) {
+    public EnemySpaceShip(Context context, boolean boss) {
         this.context = context;
-        enemySpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.threat);
+        if (!boss)
+            enemySpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.threat);
+        else
+            enemySpaceShip = BitmapFactory.decodeResource(context.getResources(), R.drawable.boss);
         random = new Random();
         resetEnemySpaceShip();
     }
@@ -29,7 +34,10 @@ public class EnemySpaceShip {
     }
 
     public int getEnemySpaceShipWidth() {
-        return enemySpaceShip.getWidth();
+        if (enemySpaceShip.getWidth() < screenWidth)
+            return enemySpaceShip.getWidth();
+        else
+            return screenWidth;
     }
 
     private void resetEnemySpaceShip() {
