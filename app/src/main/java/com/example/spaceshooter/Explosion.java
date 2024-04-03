@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
+// Animations for Explosion
 public class Explosion {
     Bitmap explosion[] = new Bitmap[8];
     int frame;

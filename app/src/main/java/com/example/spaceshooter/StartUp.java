@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.ContactsContract;
@@ -66,7 +67,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class StartUp extends AppCompatActivity {
-    TextView startTV;
+    TextView langLocation;
     Spinner playerSpinner;
     contactAdapter contactAdapter;
     ArrayList<String> listContact = new ArrayList<>();;
@@ -74,6 +75,8 @@ public class StartUp extends AppCompatActivity {
     Button lastPlayed;
     Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private MediaPlayer BGMPlayer;
+//    BackgroundSound mBackgroundSound = new BackgroundSound();
+
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Geocoder geocoder;
     private List<Pair<Double, Double>> pairsList = new ArrayList<>();
@@ -99,8 +102,9 @@ public class StartUp extends AppCompatActivity {
                     if (!addresses.isEmpty()) {
                         Language.setCountryName(addresses.get(0).getCountryName());
                         language = Language.getInstance();
-                        startTV = findViewById(R.id.startTV);
-                        startTV.setText(language.getStart());
+                        // thay vì hiển thị "Start" trong các ngôn ngữ khác nhau thì hiện "Vị trí: *tên_nước*" trong các ngôn ngữ khác nhau
+                        langLocation = findViewById(R.id.startTV);
+                        langLocation.setText(language.getStart());
                     } else {
                         Log.e(TAG, "No address found.");
                     }
@@ -197,9 +201,7 @@ public class StartUp extends AppCompatActivity {
         });
         BGMPlayer.start();
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
-        start = (ImageView) findViewById(R.id.play_button);
         lastPlayed.setEnabled(false);
-        start.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
         importList();
         contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
@@ -216,6 +218,8 @@ public class StartUp extends AppCompatActivity {
             }
         });
 
+        start = (ImageView) findViewById(R.id.play_button);
+        start.setEnabled(false);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,6 +299,7 @@ public class StartUp extends AppCompatActivity {
     public void openSettings(View v) {
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void exitGame(View v) {
@@ -343,4 +348,25 @@ public class StartUp extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+//    public class BackgroundSound extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            MediaPlayer player = MediaPlayer.create(StartUp.this, R.raw.menubgm);
+//            player.setLooping(true); // Set looping
+//            player.setVolume(1.0f, 1.0f);
+//            player.start();
+//
+//            return null;
+//        }
+//    }
+//    public void onResume() {
+//        super.onResume();
+//        mBackgroundSound.execute((Void) null);
+//    }
+//    public void onPause() {
+//        super.onPause();
+//        mBackgroundSound.cancel(true);
+//    }
 }

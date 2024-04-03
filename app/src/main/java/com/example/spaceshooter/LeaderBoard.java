@@ -1,8 +1,11 @@
 package com.example.spaceshooter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +22,7 @@ import java.util.List;
 public class LeaderBoard extends AppCompatActivity {
     ListView leaderlv;
     List<String> contactList;
+    Button back;
     private List<Pair<String, Integer>> pairsList = new ArrayList<>();
     private int points;
     private String account;
@@ -34,6 +38,20 @@ public class LeaderBoard extends AppCompatActivity {
         readTextFile();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contactList);
         leaderlv.setAdapter(adapter);
+
+        back = (Button) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backToStart(v);
+            }
+        });
+    }
+
+    public void backToStart(View v) {
+        Intent intent = new Intent(this, StartUp.class);
+        startActivity(intent);
+        finish();
     }
 
     public void readTextFile() {
