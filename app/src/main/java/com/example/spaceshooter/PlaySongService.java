@@ -58,11 +58,15 @@ public class PlaySongService extends Service {
     @Override
     public void onDestroy() {
         // Release the resources
+        if (!Settings.music)
+            return;
         mediaPlayer.release();
         super.onDestroy();
     }
 
     public void pauseMusic() {
+        if (!Settings.music)
+            return;
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             pausedPosition = mediaPlayer.getCurrentPosition();
@@ -70,6 +74,8 @@ public class PlaySongService extends Service {
     }
 
     public void resumeMusic() {
+        if (!Settings.music)
+            return;
         if (mediaPlayer != null && !mediaPlayer.isPlaying()){
             mediaPlayer.start();
             mediaPlayer.seekTo(pausedPosition);
@@ -78,11 +84,15 @@ public class PlaySongService extends Service {
 
 
     private void restartAudio() {
+        if (!Settings.music)
+            return;
         mediaPlayer.seekTo(0);
         mediaPlayer.start();
     }
 
     private void playSong(int songId) {
+        if (!Settings.music)
+            return;
         // Dựa vào songId để chọn bài hát cần phát
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
@@ -98,11 +108,14 @@ public class PlaySongService extends Service {
         else if (songId == 3) {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.gameover);
         }
+
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
     }
     private void adjustVolume(int volumeLevel) {
+        if (!Settings.music)
+            return;
         if (mediaPlayer != null) {
             float volume = (float) volumeLevel / 100;
             mediaPlayer.setVolume(volume, volume);

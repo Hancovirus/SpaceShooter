@@ -14,7 +14,7 @@ public class Bullet {
     private MediaPlayer bulletSoundPlayer;
 
     public Bullet(Context context, int bx, int by, int bulletType, boolean sound) {
-        if (sound) {
+        if (sound && Settings.sound) {
             bulletSoundPlayer = MediaPlayer.create(context, R.raw.bulletsound);
             bulletSoundPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override

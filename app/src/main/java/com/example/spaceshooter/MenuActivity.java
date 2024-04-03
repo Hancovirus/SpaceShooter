@@ -21,7 +21,11 @@ public class MenuActivity extends AppCompatActivity {
         music = findViewById(R.id.music_button);
         back = findViewById(R.id.yes_button);
 
+        if (!Settings.sound) sound.setImageResource(R.drawable.soundbuttonoff);
+        else sound.setImageResource(R.drawable.soundbutton);
 
+        if (!Settings.music) music.setImageResource(R.drawable.musicbuttonoff);
+        else music.setImageResource(R.drawable.musicbutton);
 
         sound.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,6 +33,7 @@ public class MenuActivity extends AppCompatActivity {
                 Settings.sound = !Settings.sound;
                 if (!Settings.sound) sound.setImageResource(R.drawable.soundbuttonoff);
                 else sound.setImageResource(R.drawable.soundbutton);
+                Settings.writeTextFile();
             }
         });
 
@@ -38,8 +43,10 @@ public class MenuActivity extends AppCompatActivity {
                 Settings.music = !Settings.music;
                 if (!Settings.music) music.setImageResource(R.drawable.musicbuttonoff);
                 else music.setImageResource(R.drawable.musicbutton);
+                Settings.writeTextFile();
             }
         });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

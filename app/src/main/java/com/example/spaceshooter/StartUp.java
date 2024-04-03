@@ -93,6 +93,7 @@ public class StartUp extends AppCompatActivity {
     private ActivityResultLauncher<String> requestLocationPermissionLauncher;
     private ActivityResultLauncher<String> requestContactPermissionLauncher;
     private Pair<Double, Double> locationPair;
+    private Settings settings;
     private Double latitude, longitude;
     private boolean audioPlayed = false;
     private LocationCallback locationCallback = new LocationCallback() {
@@ -185,7 +186,7 @@ public class StartUp extends AppCompatActivity {
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
         lastPlayed.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
-
+        importList();
         contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
         playerSpinner.setAdapter(contactAdapter);
         playerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -199,6 +200,8 @@ public class StartUp extends AppCompatActivity {
 
             }
         });
+
+        settings = new Settings(this);
 
         start = (ImageView) findViewById(R.id.play_button);
         start.setEnabled(false);
@@ -273,11 +276,6 @@ public class StartUp extends AppCompatActivity {
         } else {
             checkSettingsAndStartLocationUpdates();
         }
-
-
-
-
-
     }
     @Override
     protected void onPause() {
