@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +15,17 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
         tools:targetApi="31">
         <activity
+            android:name=".WebActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name=".EventWebServiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WebServiceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -23,12 +36,10 @@
         </activity>
         <activity
             android:name=".StartUp"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".GameOver"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>
