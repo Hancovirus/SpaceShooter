@@ -22,7 +22,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class EventWebServiceFragment extends Fragment {
     private static final String BASE_URL = "https://eventandroidgameapi.onrender.com/";
-    private static final String PLAYER_ID = "14";
+    private static final String PLAYER_ID = "15";
+
 
     private FragmentEventWebBinding binding;
     private View root;
