@@ -1,5 +1,8 @@
 package com.example.spaceshooter;
 
+import static java.lang.Math.random;
+import static java.lang.Math.sin;
+
 import android.content.Context;
 import android.graphics.Canvas;
 
@@ -9,10 +12,14 @@ import java.util.Random;
 
 public class Phase2 extends Phase{
     private int waitFrame;
+    private Random random;
+    private long currentAngle;
     public Phase2(int requirement) {
         super.size = 2;
         waitFrame = 50;
-        super.requirement = requirement + 5;
+        random = new Random();
+        super.requirement = requirement + 20;
+        currentAngle = 0;
     }
     @Override
     public void enemyMovement(Canvas canvas, ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets, Context context, int screenWidth) {
@@ -24,17 +31,21 @@ public class Phase2 extends Phase{
 
         if (enemies.size() < super.size) {
             EnemySpaceShip enemy = new EnemySpaceShip(context, false);
+            enemy.ex = random.nextInt(screenWidth / 2);
             enemy.eVelx = 30;
-            enemy.eVely = 10;
+            enemy.eVely = random.nextInt(300);
             enemies.add(enemy);
         } //Create enemy
 
+        currentAngle += 5;
+
+        double angle = Math.toRadians(currentAngle % 360);
+
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).ex += enemies.get(i).eVelx;
-            enemies.get(i).ey += enemies.get(i).eVelx;
+            enemies.get(i).ey = 200 + enemies.get(i).eVely + (int) (200 * sin(angle));
             if (enemies.get(i).ex + enemies.get(i).getEnemySpaceShipWidth() >= screenWidth || enemies.get(i).ex <=0) {
                 enemies.get(i).eVelx *= -1;
-                enemies.get(i).eVely *= -1;
             } //Enemy bounce back
 
             canvas.drawBitmap(enemies.get(i).getEnemySpaceShip(), enemies.get(i).ex, enemies.get(i).ey, null);

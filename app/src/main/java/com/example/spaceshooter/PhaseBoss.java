@@ -27,7 +27,7 @@ public class PhaseBoss extends Phase{
     private static int pattern = 0;
     EnemySpaceShip boss;
     public PhaseBoss(Context context, int requirement) {
-        super.requirement = requirement + 5;
+        super.requirement = requirement + 30;
         boss = new EnemySpaceShip(context, true);
         boss.ex = 0;
         boss.ey = 0;

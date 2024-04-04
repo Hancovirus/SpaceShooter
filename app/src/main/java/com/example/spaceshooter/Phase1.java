@@ -9,10 +9,12 @@ import java.util.Random;
 
 public class Phase1 extends Phase {
     private int waitFrame;
+    private Random random;
     public Phase1(int requirement) {
         super.size = 3;
         waitFrame = 50;
-        super.requirement = requirement + 5;
+        random = new Random();
+        super.requirement = requirement + 20;
     }
     @Override
     public void enemyMovement(Canvas canvas, ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets, Context context, int screenWidth) {
@@ -24,6 +26,7 @@ public class Phase1 extends Phase {
 
         if (enemies.size() < super.size) {
             EnemySpaceShip enemy = new EnemySpaceShip(context, false);
+            enemy.ex = random.nextInt(screenWidth / 2);
             enemy.eVelx = 15;
             enemies.add(enemy);
         } //Create enemy
