@@ -122,7 +122,6 @@ public class StartUp extends AppCompatActivity {
                 }
             }
             stopLocationUpdates();
-            lastPlayed.setEnabled(true);
             start.setEnabled(true);
         }
     };
@@ -184,7 +183,6 @@ public class StartUp extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         lastPlayed = (Button) findViewById(R.id.lastPlayed);
-        lastPlayed.setEnabled(false);
         playerSpinner = (Spinner) findViewById(R.id.playerSpinner);
         importList();
         contactAdapter = new contactAdapter(this, R.layout.contactstringselected, listContact);
@@ -365,6 +363,10 @@ public class StartUp extends AppCompatActivity {
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
         finish();
+    }
+    public void goToWebActivity(View v){
+        Intent intent = new Intent(this, WebActivity.class);
+        this.startActivity(intent);
     }
 
     public void exitGame(View v) {

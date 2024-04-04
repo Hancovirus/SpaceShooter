@@ -47,15 +47,6 @@
         android:textAlignment="center"
         android:textSize="25sp"/>
 
-    <Button
-        android:id="@+id/lastPlayed"
-        android:layout_width="194dp"
-        android:layout_height="66dp"
-        android:text="LastPLayed"
-        android:textSize="25sp"
-        android:backgroundTint="#00168C"
-        android:onClick="seePast"/>
-
     <Spinner
         android:id="@+id/playerSpinner"
         android:layout_width="match_parent"
@@ -63,12 +54,48 @@
         android:layout_margin="10dp"
         android:background="@android:color/transparent" />
 
-    <Button
-        android:id="@+id/leaderboard"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:text="LeaderBoard"
-        android:backgroundTint="#00168C"
-        android:onClick="seeLeaderBoard"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        >
 
+        <Button
+            android:id="@+id/lastPlayed"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="#00168C"
+            android:onClick="seePast"
+            android:text="LastPLayed"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="70dp" />
+
+        <Button
+            android:id="@+id/leaderboard"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="#00168C"
+            android:onClick="seeLeaderBoard"
+            android:text="LeaderBoard"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/mision"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="#00168C"
+            android:text="Mision"
+            android:textSize="14sp"
+            android:onClick="goToWebActivity" />
+    </LinearLayout>
 </LinearLayout>
