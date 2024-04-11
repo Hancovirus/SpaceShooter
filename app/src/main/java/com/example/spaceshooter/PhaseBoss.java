@@ -27,7 +27,11 @@ public class PhaseBoss extends Phase{
     private static int pattern = 0;
     EnemySpaceShip boss;
     public PhaseBoss(Context context, int requirement) {
+<<<<<<< Updated upstream
         super.requirement = requirement + 30;
+=======
+        super.requirement = requirement + 5;
+>>>>>>> Stashed changes
         boss = new EnemySpaceShip(context, true);
         boss.ex = 0;
         boss.ey = 0;

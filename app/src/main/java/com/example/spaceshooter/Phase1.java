@@ -9,12 +9,19 @@ import java.util.Random;
 
 public class Phase1 extends Phase {
     private int waitFrame;
+<<<<<<< Updated upstream
     private Random random;
     public Phase1(int requirement) {
         super.size = 3;
         waitFrame = 50;
         random = new Random();
         super.requirement = requirement + 20;
+=======
+    public Phase1(int requirement) {
+        super.size = 3;
+        waitFrame = 50;
+        super.requirement = requirement + 5;
+>>>>>>> Stashed changes
     }
     @Override
     public void enemyMovement(Canvas canvas, ArrayList<EnemySpaceShip> enemies, ArrayList<Bullet> eBullets, Context context, int screenWidth) {
@@ -26,7 +33,10 @@ public class Phase1 extends Phase {
 
         if (enemies.size() < super.size) {
             EnemySpaceShip enemy = new EnemySpaceShip(context, false);
+<<<<<<< Updated upstream
             enemy.ex = random.nextInt(screenWidth / 2);
+=======
+>>>>>>> Stashed changes
             enemy.eVelx = 15;
             enemies.add(enemy);
         } //Create enemy
